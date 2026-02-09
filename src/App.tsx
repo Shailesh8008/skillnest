@@ -4,6 +4,8 @@ import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import Courses from "./pages/Courses";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/courses" element={<Courses />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </main>
         <Footer />
