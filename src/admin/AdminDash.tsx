@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import AdminNav from "./AdminNav";
 import { FcComboChart } from "react-icons/fc";
+import toast from "react-hot-toast";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function AdminDash() {
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState([]);
+  const [courses, setCourses] = useState([]);
 
-  const getProducts = async () => {
+  const getCourses = async () => {
     try {
-      const res = await fetch(`${backendUrl}/api/getproducts`);
+      const res = await fetch(`${backendUrl}/api/getcourses`);
       const data = await res.json();
       if (!data.ok) {
         toast.error(data.message);
         setLoading(false);
-        return setProducts([]);
+        return setCourses([]);
       }
-      setProducts(data.data);
+      setCourses(data.data);
     } catch (error) {
       console.log("Internal server error");
     }
@@ -24,7 +25,7 @@ export default function AdminDash() {
   };
 
   useEffect(() => {
-    getProducts();
+    getCourses();
   }, []);
 
   return (
@@ -36,14 +37,14 @@ export default function AdminDash() {
           <FcComboChart className="text-3xl" />
         </div>
         <div className="shadow-lg p-4 rounded space-y-2">
-          <p className="text-gray-600 font-semibold">Total Products</p>
+          <p className="text-gray-600 font-semibold">Total Courses</p>
           {loading ? (
             <div className="flex">
               <div className="h-6 w-6 border-4 border-t-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
             </div>
           ) : (
             <p className="text-green-500 font-bold text-xl">
-              {products.length}
+              {courses.length}
             </p>
           )}
         </div>

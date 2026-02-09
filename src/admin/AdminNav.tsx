@@ -12,8 +12,8 @@ export default function AdminNav() {
         <Link to={"/admin/dashboard"} className="block hover:text-green-500">
           <MdDashboard className="inline mr-1" /> Dashboard
         </Link>
-        <Link to={"/admin/products"} className="block hover:text-green-500">
-          <MdProductionQuantityLimits className="inline mr-1" /> Manage Products
+        <Link to={"/admin/courses"} className="block hover:text-green-500">
+          <MdProductionQuantityLimits className="inline mr-1" /> Manage Courses
         </Link>
         <Link to={"/admin/query"} className="block hover:text-green-500">
           <LuMessageSquareWarning className="inline mr-1" /> Manage Queries

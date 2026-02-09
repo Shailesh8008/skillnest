@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, ArrowRight, Sparkles } from "lucide-react";
 
 export default function Hero() {

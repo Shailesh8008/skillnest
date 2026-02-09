@@ -4,11 +4,22 @@ import { FcVoicePresentation } from "react-icons/fc";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-const backendUrl = import.meta.env.VITE_BACKEND_URL
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+interface Query {
+  _id: string;
+  username: string;
+  email: string;
+  query: string;
+  status: string;
+}
 
 export default function AdminQuery() {
-  const [queries, setQueries] = useState([]);
-  const [isQueryOpen, setIsQueryOpen] = useState({ status: false, query: {} });
+  const [queries, setQueries] = useState<Query[]>([]);
+  const [isQueryOpen, setIsQueryOpen] = useState<{
+    status: boolean;
+    query: Partial<Query>;
+  }>({ status: false, query: {} });
   const navigate = useNavigate();
 
   const getQueries = async () => {
@@ -29,10 +40,10 @@ export default function AdminQuery() {
     getQueries();
   }, []);
 
-  const validateLength = (value) =>
+  const validateLength = (value: string) =>
     value.length > 10 ? value.slice(0, 10) + "..." : value;
 
-  const handleDelete = async (qid) => {
+  const handleDelete = async (qid: string) => {
     try {
       const res = await fetch(`${backendUrl}/api/deletequery/${qid}`, {
         method: "DELETE",
@@ -49,7 +60,7 @@ export default function AdminQuery() {
     }
   };
 
-  const updateStatus = async (id) => {
+  const updateStatus = async (id: string) => {
     try {
       const res = await fetch(`${backendUrl}/api/updatestatus/${id}`, {
         credentials: "include",
@@ -92,8 +103,9 @@ export default function AdminQuery() {
               <hr className="my-2 text-gray-400" />
               <div className="text-end space-x-3">
                 <button
-                  onClick={(e) =>
-                    navigate(`/admin/queryreply/${isQueryOpen.query["_id"]}`)
+                  onClick={() =>
+                    isQueryOpen.query._id &&
+                    navigate(`/admin/queryreply/${isQueryOpen.query._id}`)
                   }
                   className="text-xs text-white bg-green-500 active:bg-green-600 px-3 py-2 rounded cursor-pointer font-semibold"
                 >
@@ -101,8 +113,10 @@ export default function AdminQuery() {
                 </button>
                 <button
                   onClick={() => {
-                    handleDelete(isQueryOpen.query["_id"]);
-                    setIsQueryOpen({ status: false, query: {} });
+                    if (isQueryOpen.query._id) {
+                      handleDelete(isQueryOpen.query._id);
+                      setIsQueryOpen({ status: false, query: {} });
+                    }
                   }}
                   className="text-xs text-white bg-red-500 active:bg-red-600 px-3 py-2 rounded cursor-pointer font-semibold"
                 >

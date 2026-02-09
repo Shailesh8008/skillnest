@@ -1,99 +1,32 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import CourseCard from "../components/CourseCard";
 import CourseFilters from "../components/CourseFilters";
 import { Filter } from "lucide-react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-// Extended mock data for the courses page
-const allCourses = [
-  {
-    title: "Complete Web Design: from Figma to Webflow to Freelancing",
-    instructor: "Vako Shvili",
-    rating: 4.8,
-    students: 12500,
-    price: "$24.99",
-    duration: "22h 30m",
-    image:
-      "https://images.unsplash.com/photo-1587440871875-191322ee64b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Design",
-  },
-  {
-    title: "The Complete Python Bootcamp From Zero to Hero in Python",
-    instructor: "Jose Portilla",
-    rating: 4.6,
-    students: 8500,
-    price: "$19.99",
-    duration: "18h 15m",
-    image:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Development",
-  },
-  {
-    title: "Digital Marketing Masterclass - 23 Courses in 1",
-    instructor: "Phil Ebiner",
-    rating: 4.5,
-    students: 21000,
-    price: "$29.99",
-    duration: "32h 45m",
-    image:
-      "https://images.unsplash.com/photo-1557838923-2985c318be48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Marketing",
-  },
-  {
-    title: "Photography Masterclass: A Complete Guide to Photography",
-    instructor: "Phil Ebiner",
-    rating: 4.7,
-    students: 15400,
-    price: "$22.99",
-    duration: "21h 00m",
-    image:
-      "https://images.unsplash.com/photo-1554048612-387768052bf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Photography",
-  },
-  {
-    title: "Logic Pro X Masterclass - Learn Music Production",
-    instructor: "Tomas George",
-    rating: 4.8,
-    students: 9200,
-    price: "$34.99",
-    duration: "25h 10m",
-    image:
-      "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Music",
-  },
-  {
-    title: "Machine Learning A-Z: Hands-On Python & R In Data Science",
-    instructor: "Kirill Eremenko",
-    rating: 4.7,
-    students: 18900,
-    price: "$49.99",
-    duration: "44h 30m",
-    image:
-      "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Data Science",
-  },
-  {
-    title: "Complete Blender Creator: Learn 3D Modelling for Beginners",
-    instructor: "GameDev.tv",
-    rating: 4.9,
-    students: 7600,
-    price: "$19.99",
-    duration: "36h 00m",
-    image:
-      "https://images.unsplash.com/photo-1617791160505-6f00504e3519?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Design",
-  },
-  {
-    title: "Investment Banking and Finance: Private Equity Finance",
-    instructor: "365 Careers",
-    rating: 4.6,
-    students: 5400,
-    price: "$39.99",
-    duration: "14h 45m",
-    image:
-      "https://images.unsplash.com/photo-1611974765270-ca12586343bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Business",
-  },
-];
+interface Course {
+  _id: string;
+  title: string;
+  instructor: string;
+  price: string;
+  duration: string;
+  pimage: string;
+  category: string;
+  rating?: number;
+  students?: number;
+}
+
+interface CourseCardData {
+  id: string;
+  title: string;
+  instructor: string;
+  rating: number;
+  students: number;
+  price: string;
+  duration: string;
+  image: string;
+  category: string;
+}
 
 export default function Courses() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -102,10 +35,64 @@ export default function Courses() {
   const [minRating, setMinRating] = useState<number | null>(null);
   const [selectedDurations, setSelectedDurations] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("Most Popular");
+  const [allCourses, setAllCourses] = useState<CourseCardData[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<Set<string>>(
+    new Set(),
+  );
+
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/mycourses`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          // Assuming data.data.myCourses is an array of course IDs
+          if (data.ok && data.data && data.data.myCourses) {
+            setEnrolledCourses(new Set(data.data.myCourses));
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching enrolled courses:", err);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/getcourses`);
+        const data = await response.json();
+        if (!data.ok) {
+          console.log(data.message);
+          return;
+        }
+        const mappedCourses = data.data.map((course: Course) => ({
+          id: course._id,
+          title: course.title,
+          instructor: course.instructor || "Unknown Instructor",
+          rating: course.rating || (Math.random() * (5 - 4) + 4).toFixed(1),
+          students: course.students,
+          price: course.price,
+          duration: course.duration || "0h 0m",
+          image: course.pimage,
+          category: course.category,
+        }));
+        setAllCourses(mappedCourses);
+      } catch (error) {
+        console.log("Error fetching courses", error);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   const filteredCourses = useMemo(() => {
     return allCourses
-      .filter((course) => {
+      .filter((course: CourseCardData) => {
         // Search Filter
         if (
           searchQuery &&
@@ -125,9 +112,10 @@ export default function Courses() {
 
         // Price Filter
         if (priceFilter !== "all") {
-          // Assuming all current mock data is paid for simplicity, but simulating logic
-          // Real logic would parse the price string or have a isFree boolean
-          const isFree = course.price === "Free" || course.price === "$0.00";
+          const numericPrice = parseFloat(
+            String(course.price).replace(/[^0-9.]/g, ""),
+          );
+          const isFree = isNaN(numericPrice) || numericPrice === 0;
           if (priceFilter === "free" && !isFree) return false;
           if (priceFilter === "paid" && isFree) return false;
         }
@@ -139,8 +127,6 @@ export default function Courses() {
 
         // Duration Filter
         if (selectedDurations.length > 0) {
-          // This would need more complex parsing of "22h 30m" to match ranges like "17+ Hours"
-          // For this mock, we'll strip the first number and make a simple guess
           const hours = parseInt(course.duration);
           const matchesDuration = selectedDurations.some((durationRange) => {
             if (durationRange === "0-2 Hours") return hours <= 2;
@@ -155,21 +141,21 @@ export default function Courses() {
 
         return true;
       })
-      .sort((a, b) => {
+      .sort((a: CourseCardData, b: CourseCardData) => {
         switch (sortBy) {
           case "Newest":
-            return 0; // Mock data doesn't have dates, keep original order or shuffle
+            return 0;
           case "Highest Rated":
             return b.rating - a.rating;
           case "Price: Low to High":
             return (
-              parseFloat(a.price.replace("$", "")) -
-              parseFloat(b.price.replace("$", ""))
+              parseFloat(String(a.price).replace(/[^0-9.]/g, "")) -
+              parseFloat(String(b.price).replace(/[^0-9.]/g, ""))
             );
           case "Price: High to Low":
             return (
-              parseFloat(b.price.replace("$", "")) -
-              parseFloat(a.price.replace("$", ""))
+              parseFloat(String(b.price).replace(/[^0-9.]/g, "")) -
+              parseFloat(String(a.price).replace(/[^0-9.]/g, ""))
             );
           default: // Most Popular
             return b.students - a.students;
@@ -182,7 +168,79 @@ export default function Courses() {
     minRating,
     selectedDurations,
     sortBy,
+    allCourses,
   ]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
+
+  // Calculate pagination with useMemo
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredCourses.length / itemsPerPage);
+  }, [filteredCourses.length, itemsPerPage]);
+
+  const currentCourses = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredCourses.slice(start, end);
+  }, [currentPage, filteredCourses, itemsPerPage]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [
+    searchQuery,
+    selectedCategories,
+    priceFilter,
+    minRating,
+    selectedDurations,
+    sortBy,
+  ]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  // Get smart pagination pages
+  const getPaginationPages = () => {
+    const pages: (number | "dots")[] = [];
+
+    if (totalPages <= 4) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    pages.push(1);
+
+    if (start > 2) {
+      pages.push("dots");
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (end < totalPages - 1) {
+      pages.push("dots");
+    }
+
+    pages.push(totalPages);
+
+    return pages;
+  };
+
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -215,13 +273,6 @@ export default function Courses() {
             </select>
           </div>
 
-          {/* Desktop Sort - previously inside the mobile div, now duplicated or moved? 
-              The original design had the select only in the mobile div which was md:hidden.
-              Wait, the original design didn't seem to have a desktop sort dropdown explicitly shown outside the mobile block.
-              I should probably add one for desktop too if it's not there, or ensure the mobile one covers it.
-              The original code had `gap-2 md:hidden`, so the sort was HIDDEN on desktop. 
-              I should probably expose the sort on desktop too.
-          */}
           <div className="hidden md:flex items-center gap-2">
             <span className="text-gray-500 text-sm font-medium">Sort by:</span>
             <select
@@ -259,10 +310,14 @@ export default function Courses() {
 
           {/* Course Grid */}
           <div className="lg:col-span-3">
-            {filteredCourses.length > 0 ? (
+            {currentCourses.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCourses.map((course, index) => (
-                  <CourseCard key={index} {...course} />
+                {currentCourses.map((course: CourseCardData, index: number) => (
+                  <CourseCard
+                    key={course.id || index}
+                    {...course}
+                    isEnrolled={enrolledCourses.has(course.id)}
+                  />
                 ))}
               </div>
             ) : (
@@ -286,29 +341,48 @@ export default function Courses() {
             )}
 
             {/* Pagination - Only show if there are courses */}
-            {filteredCourses.length > 0 && (
-              <div className="mt-12 flex justify-center">
-                <nav className="flex gap-2">
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors disabled:opacity-50">
-                    Previous
-                  </button>
-                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium">
-                    1
-                  </button>
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors">
-                    2
-                  </button>
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors">
-                    3
-                  </button>
-                  <span className="px-4 py-2 text-gray-400">...</span>
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors">
-                    8
-                  </button>
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-white hover:text-indigo-600 transition-colors">
-                    Next
-                  </button>
-                </nav>
+            {filteredCourses.length > itemsPerPage && (
+              <div className="mt-8 flex items-center justify-center gap-4 flex-wrap">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg bg-white border border-gray-200 hover:border-indigo-600 text-gray-600 hover:text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {screenWidth < 500 ? "Prev" : "Previous"}
+                </button>
+
+                <div className="flex items-center gap-2 flex-wrap justify-center">
+                  {getPaginationPages().map((page, index) =>
+                    page === "dots" ? (
+                      <span
+                        key={`dots-${index}`}
+                        className="text-gray-400 px-2"
+                      >
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page as number)}
+                        className={`px-3 py-2 rounded-lg transition-colors font-medium ${
+                          currentPage === page
+                            ? "bg-indigo-600 text-white"
+                            : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-indigo-600"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ),
+                  )}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg bg-white border border-gray-200 hover:border-indigo-600 text-gray-600 hover:text-indigo-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>

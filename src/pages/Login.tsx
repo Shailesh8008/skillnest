@@ -1,14 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function Login() {
   const [wait, setWait] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const [isPass, setIsPass] = useState(false);
   const [form, setForm] = useState({

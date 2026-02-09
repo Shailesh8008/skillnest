@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BookOpen,
   Twitter,
@@ -7,6 +6,7 @@ import {
   Linkedin,
   Send,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -62,12 +62,12 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/courses"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Browse Courses
-                </a>
+                </Link>
               </li>
               <li>
                 <a

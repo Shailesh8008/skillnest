@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import type { FormEvent, ChangeEvent } from "react";
 import { FcVoicePresentation } from "react-icons/fc";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminNav from "./AdminNav";
 import toast from "react-hot-toast";
-const backendUrl = import.meta.env.VITE_BACKEND_URL
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function QueryReply() {
   const [formData, setFormData] = useState({
@@ -15,24 +16,25 @@ export default function QueryReply() {
   const params = useParams();
   const navigate = useNavigate();
 
-  const getQueryDetails = async (id) => {
-    try {
-      const res = await fetch(`${backendUrl}/api/getquerydetails/${id}`);
-      const data = await res.json();
-      if (!data.ok) {
-        return toast.error(data.message);
-      }
-      return setFormData({ ...formData, to: data.data.email });
-    } catch (error) {
-      toast.error("Internal server error");
-    }
-  };
-
   useEffect(() => {
-    getQueryDetails(params.id);
-  }, []);
+    const getQueryDetails = async () => {
+      try {
+        const res = await fetch(
+          `${backendUrl}/api/getquerydetails/${params.id}`,
+        );
+        const data = await res.json();
+        if (!data.ok) {
+          return toast.error(data.message);
+        }
+        setFormData((prev) => ({ ...prev, to: data.data.email }));
+      } catch (error) {
+        toast.error("Internal server error");
+      }
+    };
+    if (params.id) getQueryDetails();
+  }, [params.id]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (wait) return;
     try {
@@ -56,8 +58,9 @@ export default function QueryReply() {
     }
   };
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => setFormData({ ...formData, [e.target.id]: e.target.value });
 
   return (
     <div className="flex min-h-screen -mb-14">
@@ -68,7 +71,7 @@ export default function QueryReply() {
           <FcVoicePresentation className="text-3xl" />
         </div>
         <button
-          onClick={(e) => navigate("/admin/query")}
+          onClick={() => navigate("/admin/query")}
           className="bg-gray-300 active:bg-gray-400 px-4 py-1 rounded cursor-pointer mb-4"
         >
           Back
@@ -105,7 +108,7 @@ export default function QueryReply() {
                 onChange={handleChange}
                 placeholder="Enter your message"
                 className="w-full shadow-inner shadow-gray-200 mt-2 py-1.5 px-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:bg-gray-50"
-                rows="3"
+                rows={3}
               ></textarea>
             </div>
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { Award, Users, Video, Clock } from "lucide-react";
 
 const features = [

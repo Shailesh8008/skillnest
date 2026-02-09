@@ -1,58 +1,98 @@
-import React from "react";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 import FeatureHighlights from "../components/FeatureHighlights";
 import CourseCard from "../components/CourseCard";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-// Mock data for featured courses
-const featuredCourses = [
-  {
-    title: "Complete Web Design: from Figma to Webflow to Freelancing",
-    instructor: "Vako Shvili",
-    rating: 4.8,
-    students: 12500,
-    price: "$24.99",
-    duration: "22h 30m",
-    image:
-      "https://images.unsplash.com/photo-1587440871875-191322ee64b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Design",
-  },
-  {
-    title: "The Complete Python Bootcamp From Zero to Hero in Python",
-    instructor: "Jose Portilla",
-    rating: 4.6,
-    students: 8500,
-    price: "$19.99",
-    duration: "18h 15m",
-    image:
-      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Development",
-  },
-  {
-    title: "Digital Marketing Masterclass - 23 Courses in 1",
-    instructor: "Phil Ebiner",
-    rating: 4.5,
-    students: 21000,
-    price: "$29.99",
-    duration: "32h 45m",
-    image:
-      "https://images.unsplash.com/photo-1557838923-2985c318be48?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Marketing",
-  },
-  {
-    title: "Photography Masterclass: A Complete Guide to Photography",
-    instructor: "Phil Ebiner",
-    rating: 4.7,
-    students: 15400,
-    price: "$22.99",
-    duration: "21h 00m",
-    image:
-      "https://images.unsplash.com/photo-1554048612-387768052bf7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    category: "Photography",
-  },
-];
+interface Course {
+  _id: string;
+  title: string;
+  instructor: string;
+  price: string;
+  duration: string;
+  pimage: string;
+  category: string;
+  rating?: number;
+  students?: number;
+}
+
+interface CourseCardData {
+  id: string;
+  title: string;
+  instructor: string;
+  rating: number;
+  students: number;
+  price: string;
+  duration: string;
+  image: string;
+  category: string;
+}
 
 export default function HomePage() {
+  const [featuredCourses, setFeaturedCourses] = useState<CourseCardData[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<Set<string>>(
+    new Set(),
+  );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/mycourses`, {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.ok && data.data && data.data.myCourses) {
+            setEnrolledCourses(new Set(data.data.myCourses));
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching enrolled courses:", err);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, []);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/api/getcourses`);
+        const data = await response.json();
+        if (!data.ok) {
+          console.log(data.message);
+          return;
+        }
+        const mappedCourses = data.data.map((course: Course) => ({
+          id: course._id,
+          title: course.title,
+          instructor: course.instructor || "Unknown Instructor",
+          rating: course.rating || (Math.random() * (5 - 4) + 4).toFixed(1),
+          students: course.students,
+          price: course.price,
+          duration: course.duration || "0h 0m",
+          image: course.pimage,
+          category: course.category,
+        }));
+
+        // Sort by students descending and take top 4
+        const topCourses = mappedCourses
+          .sort(
+            (a: CourseCardData, b: CourseCardData) => b.students - a.students,
+          )
+          .slice(0, 4);
+
+        setFeaturedCourses(topCourses);
+      } catch (error) {
+        console.log("Error fetching courses", error);
+      }
+    };
+    fetchCourses();
+  }, []);
   return (
     <div className="bg-white">
       <Hero />
@@ -77,7 +117,11 @@ export default function HomePage() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {featuredCourses.map((course, index) => (
-            <CourseCard key={index} {...course} />
+            <CourseCard
+              key={course.id || index}
+              {...course}
+              isEnrolled={enrolledCourses.has(course.id)}
+            />
           ))}
         </div>
 
@@ -104,10 +148,16 @@ export default function HomePage() {
             transforming their careers with SkillNest.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-200">
+            <button
+              onClick={() => navigate("/signup")}
+              className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-200"
+            >
               Get Started for Free
             </button>
-            <button className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-colors">
+            <button
+              onClick={() => navigate("/courses")}
+              className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-colors"
+            >
               Browse Courses
             </button>
           </div>
