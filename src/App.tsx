@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
-
+import Courses from "./pages/Courses";
 
 function App() {
   return (
@@ -35,7 +35,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
-
+            <Route path="/courses" element={<Courses />} />
           </Routes>
         </main>
         <Footer />

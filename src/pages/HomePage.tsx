@@ -2,7 +2,7 @@ import React from "react";
 import Hero from "../components/Hero";
 import Categories from "../components/Categories";
 import FeatureHighlights from "../components/FeatureHighlights";
-
+import CourseCard from "../components/CourseCard";
 
 // Mock data for featured courses
 const featuredCourses = [
@@ -75,7 +75,11 @@ export default function HomePage() {
           </button>
         </div>
 
-        
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {featuredCourses.map((course, index) => (
+            <CourseCard key={index} {...course} />
+          ))}
+        </div>
 
         <div className="mt-8 text-center md:hidden">
           <button className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-all">
