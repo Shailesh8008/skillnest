@@ -7,8 +7,12 @@ import {
   Send,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import Contact from "./Contact";
 
 export default function Footer() {
+  const [isContactOpen, setIsContactOpen] = useState(false);
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
@@ -28,30 +32,30 @@ export default function Footer() {
               their career paths through expert-led short courses.
             </p>
             <div className="flex space-x-4 pt-2">
-              <a
-                href="#"
+              <Link
+                to="/"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <Twitter className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
+              </Link>
+              <Link
+                to="/"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <Linkedin className="w-5 h-5" />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -70,28 +74,28 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Mentorship
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   For Business
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -103,36 +107,36 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-sm hover:text-white transition-colors"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-sm hover:text-white transition-colors"
+                <button
+                  onClick={() => setIsContactOpen(true)}
+                  className="text-sm hover:text-white transition-colors text-left"
                 >
                   Contact Us
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -170,6 +174,7 @@ export default function Footer() {
           </p>
         </div>
       </div>
+      <Contact isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
     </footer>
   );
 }

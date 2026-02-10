@@ -110,7 +110,10 @@ export default function HomePage() {
               Hand-picked courses to help you get started
             </p>
           </div>
-          <button className="hidden md:block text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-all">
+          <button
+            onClick={() => navigate("/courses")}
+            className="hidden md:block text-indigo-600 font-semibold hover:text-indigo-700 hover:underline transition-all"
+          >
             View All Courses
           </button>
         </div>

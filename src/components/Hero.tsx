@@ -1,6 +1,8 @@
 import { Search, ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate();
   return (
     <div className="relative bg-gradient-to-b from-indigo-50 via-white to-white pt-20 pb-16 overflow-hidden">
       {/* Decorative elements */}
@@ -37,7 +39,7 @@ export default function Hero() {
                 placeholder="What do you want to learn?"
                 className="w-full px-4 py-3 outline-none text-gray-700 placeholder:text-gray-400"
               />
-              <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2">
+              <button onClick={()=>navigate('/courses')} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2">
                 Explore
                 <ArrowRight className="w-4 h-4" />
               </button>

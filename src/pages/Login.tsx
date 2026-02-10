@@ -115,9 +115,9 @@ export default function Login() {
               onClick={() => setIsPass(!isPass)}
             >
               {isPass ? (
-                <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
-              ) : (
                 <FaEye className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
               )}
             </button>
           </div>

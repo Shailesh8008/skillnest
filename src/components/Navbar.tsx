@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Menu, X, BookOpen, LayoutDashboard, LogOut, User } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import Contact from "./Contact";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
   const navigate = useNavigate();
@@ -83,7 +85,7 @@ export default function Navbar() {
                   >
                     Courses
                   </Link>
-                  <Link
+                  {/* <Link
                     to="#"
                     className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium hover:text-gray-900 transition-colors ${
                       location.pathname === "/mentors"
@@ -92,17 +94,17 @@ export default function Navbar() {
                     }`}
                   >
                     Mentors
-                  </Link>
-                  <Link
-                    to="#"
+                  </Link> */}
+                  <button
+                    onClick={() => setIsContactOpen(true)}
                     className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium hover:text-gray-900 transition-colors ${
                       location.pathname === "/enterprise"
                         ? "border-indigo-500 text-gray-900"
                         : "border-transparent text-gray-500 hover:border-gray-300"
                     }`}
                   >
-                    Enterprise
-                  </Link>
+                    Contact Us
+                  </button>
                 </div>
               </div>
               <div className="hidden md:flex items-center gap-4">
@@ -227,18 +229,18 @@ export default function Navbar() {
                 >
                   Courses
                 </Link>
-                <Link
+                {/* <Link
                   to="#"
                   className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                 >
                   Mentors
-                </Link>
-                <Link
-                  to="#"
+                </Link> */}
+                <button
+                  onClick={() => setIsContactOpen(true)}
                   className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                 >
-                  Enterprise
-                </Link>
+                  Contact Us
+                </button>
               </div>
               <div className="pt-4 pb-4 border-t border-gray-100">
                 {user ? (
@@ -305,6 +307,7 @@ export default function Navbar() {
               </div>
             </div>
           )}
+          <Contact isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
         </nav>
       ) : (
         <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">

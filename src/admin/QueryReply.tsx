@@ -12,6 +12,7 @@ export default function QueryReply() {
     sub: "",
     reply: "",
   });
+  const [from, setFrom] = useState("");
   const [wait, setWait] = useState(false);
   const params = useParams();
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function QueryReply() {
           return toast.error(data.message);
         }
         setFormData((prev) => ({ ...prev, to: data.data.email }));
+        setFrom(data.from);
       } catch (error) {
         toast.error("Internal server error");
       }
@@ -76,7 +78,7 @@ export default function QueryReply() {
         >
           Back
         </button>
-        <div className="shadow-lg px-4 py-6 rounded max-w-3xl mx-auto">
+        <div className="shadow-lg px-4 py-6 rounded max-w-3xl mx-auto mb-[3rem]">
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <p>To</p>
@@ -87,7 +89,7 @@ export default function QueryReply() {
             <div>
               <p>From</p>
               <div className="block w-full shadow-inner shadow-gray-200 mt-2 py-1.5 px-2 rounded border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:bg-gray-50">
-                shailesh10thd1@gmail.com
+                {from}
               </div>
             </div>
             <div>

@@ -1,11 +1,32 @@
 import { useEffect, useState } from "react";
-import { User, Mail, Shield, BookOpen } from "lucide-react";
+import { User, Mail, Shield, BookOpen, LogOut, Compass } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`${backendUrl}/api/logout`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast.success("Logged out successfully");
+        window.location.href = "/";
+      } else {
+        toast.error("Logout failed");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
 
   useEffect(() => {
     fetch(`${backendUrl}/api/auth/user`, {
@@ -81,6 +102,18 @@ export default function Dashboard() {
                       →
                     </span>
                   </button>
+                  <button
+                    onClick={() => navigate("/courses")}
+                    className="w-full py-2 px-4 bg-white border border-gray-200 rounded-lg text-gray-600 font-medium hover:border-indigo-600 hover:text-indigo-600 transition-colors text-left flex justify-between items-center group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Compass className="w-4 h-4" />
+                      <span>Browse All Courses</span>
+                    </div>
+                    <span className="group-hover:translate-x-1 transition-transform">
+                      →
+                    </span>
+                  </button>
                 </div>
               </div>
 
@@ -111,12 +144,48 @@ export default function Dashboard() {
                       })}
                     </span>
                   </div>
+
+                  <button
+                    onClick={() => setShowLogoutConfirm(true)}
+                    className="w-full mt-4 py-2 px-4 bg-white border border-red-100 rounded-lg text-red-600 font-medium hover:bg-red-50 hover:border-red-200 transition-colors text-left flex items-center gap-2 justify-center"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full p-6 transform transition-all scale-100">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Confirm Logout
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to log out of your account?
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

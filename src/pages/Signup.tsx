@@ -103,7 +103,7 @@ export default function Signup() {
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               First Name
-              {error.fname && <span className="text-red-600 ml-1">*</span>}
+              {error.fname && <span className="text-red-600 ml-1">*Required</span>}
             </label>
             <input
               id="fname"
@@ -142,7 +142,7 @@ export default function Signup() {
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Email or Mobile number
-            {error.email && <span className="text-red-600 ml-1">*</span>}
+            {error.email && <span className="text-red-600 ml-1">*Required</span>}
           </label>
           <input
             id="email"
@@ -164,7 +164,7 @@ export default function Signup() {
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Password
-            {error.pass1 && <span className="text-red-600 ml-1">*</span>}
+            {error.pass1 && <span className="text-red-600 ml-1">*Required</span>}
             {error.pass && (
               <span className="text-red-600 ml-1 text-xs">
                 (Passwords do not match)
@@ -190,9 +190,9 @@ export default function Signup() {
               onClick={() => setIsPass(!isPass)}
             >
               {isPass ? (
-                <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
-              ) : (
                 <FaEye className="h-5 w-5" aria-hidden="true" />
+              ) : (
+                <FaEyeSlash className="h-5 w-5" aria-hidden="true" />
               )}
             </button>
           </div>
@@ -204,7 +204,7 @@ export default function Signup() {
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Confirm Password
-            {error.pass2 && <span className="text-red-600 ml-1">*</span>}
+            {error.pass2 && <span className="text-red-600 ml-1">*Required</span>}
           </label>
           <input
             id="pass2"
