@@ -61,15 +61,14 @@ export default function CourseCard({
       });
 
       const data = await res.json();
-      if (!res.ok) {
+      if (!data.ok) {
         setWait(false);
-        if (res.status === 401) {
-          toast("Please login first", { icon: "ℹ️" });
-          return navigate("/login");
+        if (data.message === "Error creating order") {
+          return toast.error(data.message || "Checkout failed");
         }
-        return toast.error(data.message || "Checkout failed");
+        toast("Please login first", { icon: "ℹ️" });
+        return navigate("/login");
       }
-
       const options = {
         key: RazorpayID,
         amount: data.data.amount,
@@ -118,7 +117,10 @@ export default function CourseCard({
       razorpayWindow.open();
     } catch (error) {
       setWait(false);
+      console.log(error);
       return toast.error("Something went wrong");
+    } finally {
+      setWait(false);
     }
   };
 
