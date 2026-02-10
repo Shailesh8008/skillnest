@@ -38,24 +38,24 @@ export default function HomePage() {
   );
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchEnrolledCourses = async () => {
-      try {
-        const response = await fetch(`${backendUrl}/api/mycourses`, {
-          method: "GET",
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.ok && data.data && data.data.myCourses) {
-            setEnrolledCourses(new Set(data.data.myCourses));
-          }
+  const fetchEnrolledCourses = async () => {
+    try {
+      const response = await fetch(`${backendUrl}/api/mycourses`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.ok && data.data && data.data.myCourses) {
+          setEnrolledCourses(new Set(data.data.myCourses));
         }
-      } catch (err) {
-        console.error("Error fetching enrolled courses:", err);
       }
-    };
+    } catch (err) {
+      console.error("Error fetching enrolled courses:", err);
+    }
+  };
 
+  useEffect(() => {
     fetchEnrolledCourses();
   }, []);
 
@@ -125,6 +125,7 @@ export default function HomePage() {
               key={course.id || index}
               {...course}
               isEnrolled={enrolledCourses.has(course.id)}
+              onEnroll={fetchEnrolledCourses}
             />
           ))}
         </div>

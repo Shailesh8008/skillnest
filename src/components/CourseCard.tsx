@@ -11,6 +11,7 @@ interface CourseCardProps {
   image: string;
   category: string;
   isEnrolled?: boolean;
+  onEnroll?: () => void;
 }
 
 import { useState } from "react";
@@ -30,6 +31,7 @@ export default function CourseCard({
   image,
   category,
   isEnrolled = false,
+  onEnroll,
 }: CourseCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -61,6 +63,7 @@ export default function CourseCard({
       });
 
       const data = await res.json();
+      console.log(data);
       if (!data.ok) {
         setWait(false);
         if (data.message === "Error creating order") {
@@ -104,7 +107,8 @@ export default function CourseCard({
             }
             setWait(false);
             setIsModalOpen(false);
-            return toast.success("Enrolled successfully!");
+            toast.success("Enrolled successfully!");
+            if (onEnroll) onEnroll();
           } catch (error) {
             setWait(false);
             return toast.error("Something went wrong");
