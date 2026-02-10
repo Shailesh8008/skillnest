@@ -7,7 +7,7 @@ import {
   Send,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Contact from "./Contact";
 
 export default function Footer() {
@@ -83,10 +83,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/"
+                  to="/about"
                   className="text-sm hover:text-white transition-colors"
                 >
-                  Pricing
+                  About Us
                 </Link>
               </li>
               <li>
@@ -150,17 +150,17 @@ export default function Footer() {
               Subscribe to our newsletter for the latest updates and free
               resources.
             </p>
-            <form className="flex flex-col gap-2">
+            <form
+              onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
+              className="flex flex-col gap-2"
+            >
               <div className="relative">
                 <input
                   type="email"
                   placeholder="Enter your email"
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg py-2 pl-3 pr-10 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 />
-                <button
-                  type="submit"
-                  className="absolute right-1 top-1 p-1 bg-indigo-600 rounded-md text-white hover:bg-indigo-500 transition-colors"
-                >
+                <button className="absolute right-2 top-[0.4rem] p-1 bg-indigo-600 rounded-md text-white hover:bg-indigo-500 transition-colors">
                   <Send className="w-4 h-4" />
                 </button>
               </div>

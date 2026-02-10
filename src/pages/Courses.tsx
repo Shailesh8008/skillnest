@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import CourseCard from "../components/CourseCard";
 import CourseFilters from "../components/CourseFilters";
 import { Filter } from "lucide-react";
@@ -29,7 +30,10 @@ interface CourseCardData {
 }
 
 export default function Courses() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || "",
+  );
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [priceFilter, setPriceFilter] = useState("all");
   const [minRating, setMinRating] = useState<number | null>(null);
@@ -39,6 +43,11 @@ export default function Courses() {
   const [enrolledCourses, setEnrolledCourses] = useState<Set<string>>(
     new Set(),
   );
+
+  useEffect(() => {
+    const query = searchParams.get("search") || "";
+    setSearchQuery(query);
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchEnrolledCourses = async () => {

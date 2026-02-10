@@ -76,6 +76,16 @@ export default function Navbar() {
                     Home
                   </Link>
                   <Link
+                    to="/about"
+                    className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium hover:text-gray-900 transition-colors ${
+                      location.pathname === "/about"
+                        ? "border-indigo-500 text-gray-900"
+                        : "border-transparent text-gray-500 hover:border-gray-300"
+                    }`}
+                  >
+                    About
+                  </Link>
+                  <Link
                     to="/courses"
                     className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium hover:text-gray-900 transition-colors ${
                       location.pathname === "/courses"
@@ -103,7 +113,7 @@ export default function Navbar() {
                         : "border-transparent text-gray-500 hover:border-gray-300"
                     }`}
                   >
-                    Contact Us
+                    Contact
                   </button>
                 </div>
               </div>
@@ -224,6 +234,12 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
+                  to="/about"
+                  className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                >
+                  About
+                </Link>
+                <Link
                   to="/courses"
                   className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                 >
@@ -239,7 +255,7 @@ export default function Navbar() {
                   onClick={() => setIsContactOpen(true)}
                   className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
                 >
-                  Contact Us
+                  Contact
                 </button>
               </div>
               <div className="pt-4 pb-4 border-t border-gray-100">
@@ -307,7 +323,10 @@ export default function Navbar() {
               </div>
             </div>
           )}
-          <Contact isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
+          <Contact
+            isOpen={isContactOpen}
+            onClose={() => setIsContactOpen(false)}
+          />
         </nav>
       ) : (
         <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 shadow-sm">

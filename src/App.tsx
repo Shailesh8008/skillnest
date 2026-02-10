@@ -8,6 +8,7 @@ import MyCourses from "./pages/MyCourses";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import About from "./pages/About";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminRoute from "./admin/AdminRoute";
 import AdminDash from "./admin/AdminDash";
@@ -48,6 +49,7 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<About />} />
             <Route path="/courses" element={<Courses />} />
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/dashboard" element={<Dashboard />} />

@@ -31,6 +31,7 @@ interface CourseCardData {
 }
 
 export default function HomePage() {
+  const [courses, setCourses] = useState<CourseCardData[]>([]);
   const [featuredCourses, setFeaturedCourses] = useState<CourseCardData[]>([]);
   const [enrolledCourses, setEnrolledCourses] = useState<Set<string>>(
     new Set(),
@@ -78,7 +79,7 @@ export default function HomePage() {
           image: course.pimage,
           category: course.category,
         }));
-
+        setCourses(mappedCourses);
         // Sort by students descending and take top 4
         const topCourses = mappedCourses
           .sort(
@@ -95,9 +96,9 @@ export default function HomePage() {
   }, []);
   return (
     <div className="bg-white">
-      <Hero />
+      <Hero courses={courses} />
 
-      <Categories />
+      <Categories courses={courses} />
 
       {/* Featured Courses Section */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

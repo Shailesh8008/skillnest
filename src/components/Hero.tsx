@@ -1,8 +1,21 @@
 import { Search, ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+interface CourseCardData {
+  id: string;
+  title: string;
+  instructor: string;
+  rating: number;
+  students: number;
+  price: string;
+  duration: string;
+  image: string;
+  category: string;
+}
 
-export default function Hero() {
+export default function Hero({ courses }: { courses: CourseCardData[] }) {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
   return (
     <div className="relative bg-gradient-to-b from-indigo-50 via-white to-white pt-20 pb-16 overflow-hidden">
       {/* Decorative elements */}
@@ -37,9 +50,18 @@ export default function Hero() {
               <input
                 type="text"
                 placeholder="What do you want to learn?"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" &&
+                  navigate(`/courses?search=${searchQuery}`)
+                }
                 className="w-full px-4 py-3 outline-none text-gray-700 placeholder:text-gray-400"
               />
-              <button onClick={()=>navigate('/courses')} className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2">
+              <button
+                onClick={() => navigate(`/courses?search=${searchQuery}`)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center gap-2"
+              >
                 Explore
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -48,7 +70,7 @@ export default function Hero() {
             <div className="flex items-center gap-8 text-sm font-medium text-gray-500">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                <span>500+ Courses</span>
+                <span>{courses.length}+ Courses</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500"></div>
