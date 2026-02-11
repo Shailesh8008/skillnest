@@ -39,7 +39,7 @@ export default function Navbar() {
         setUser(null);
         setShowLogoutConfirm(false);
         toast.success("Logged out successfully");
-        navigate("/");
+        window.location.href = "/";
       } else {
         toast.error("Logout failed");
       }
