@@ -4,9 +4,9 @@ interface CourseCardProps {
   id: string;
   title: string;
   instructor: string;
-  rating: number;
-  students: number;
-  price: number;
+  rating: number | string;
+  students: number | string;
+  price: number | string;
   duration: string;
   image: string;
   category: string;
@@ -40,11 +40,20 @@ export default function CourseCard({
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const RazorpayID = import.meta.env.VITE_RAZORPAY_ID;
 
+  // Helper to get numeric price safely
+  const getNumericPrice = (p: string | number) => {
+    if (typeof p === "number") return p;
+    const cleaned = String(p).replace(/[^0-9.]/g, "");
+    return cleaned ? parseFloat(cleaned) : 0;
+  };
+
+  const numericPrice = getNumericPrice(price);
+
   const handleCheckout = async () => {
     if (wait) return;
     setWait(true);
 
-    if (price <= 0) {
+    if (numericPrice <= 0) {
       try {
         const res = await fetch(`${backendUrl}/api/enroll`, {
           method: "POST",
@@ -73,8 +82,7 @@ export default function CourseCard({
     }
 
     try {
-      const numericPrice = parseFloat(String(price).replace(/[^0-9.]/g, ""));
-      const amount = isNaN(numericPrice) ? 0 : numericPrice;
+      const amount = numericPrice;
 
       const receipt = "receipt#" + Date.now();
       const res = await fetch(`${backendUrl}/api/checkout`, {
@@ -188,7 +196,9 @@ export default function CourseCard({
                 <Clock className="w-4 h-4" />
                 <span>{duration}</span>
               </div>
-              <div className="text-lg font-bold text-indigo-600">{price<=0 ? "Free" : `₹ ${price}`}</div>
+              <div className="text-lg font-bold text-indigo-600">
+                {numericPrice <= 0 ? "Free" : `₹ ${numericPrice}`}
+              </div>
             </div>
             <button
               onClick={() => {
