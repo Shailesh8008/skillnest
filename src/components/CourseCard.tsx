@@ -6,7 +6,7 @@ interface CourseCardProps {
   instructor: string;
   rating: number;
   students: number;
-  price: string;
+  price: number;
   duration: string;
   image: string;
   category: string;
@@ -43,6 +43,34 @@ export default function CourseCard({
   const handleCheckout = async () => {
     if (wait) return;
     setWait(true);
+
+    if (price <= 0) {
+      try {
+        const res = await fetch(`${backendUrl}/api/enroll`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            courseId: id,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setWait(false);
+          return toast.error(data.message || "Enrollment failed");
+        }
+        setWait(false);
+        setIsModalOpen(false);
+        toast.success("Enrolled successfully!");
+        if (onEnroll) onEnroll();
+      } catch (error) {
+        setWait(false);
+        return toast.error("Something went wrong");
+      }
+      return;
+    }
 
     try {
       const numericPrice = parseFloat(String(price).replace(/[^0-9.]/g, ""));
@@ -160,12 +188,26 @@ export default function CourseCard({
                 <Clock className="w-4 h-4" />
                 <span>{duration}</span>
               </div>
-              <div className="text-lg font-bold text-indigo-600">₹ {price}</div>
+              <div className="text-lg font-bold text-indigo-600">{price<=0 ? "Free" : `₹ ${price}`}</div>
             </div>
             <button
               onClick={() => {
                 if (isEnrolled) {
-                  navigate("/my-courses");
+                  navigate(`/course/${id}`, {
+                    state: {
+                      courseData: {
+                        id,
+                        title,
+                        instructor,
+                        rating,
+                        students,
+                        price,
+                        duration,
+                        image,
+                        category,
+                      },
+                    },
+                  });
                 } else {
                   setIsModalOpen(true);
                 }
