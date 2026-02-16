@@ -41,7 +41,6 @@ export default function Login() {
         setWait(false);
         return;
       }
-      toast.success(data.message);
       window.location.href = "/";
     } catch (error) {
       setWait(false);
@@ -70,7 +69,9 @@ export default function Login() {
             className="block text-sm font-medium text-gray-700 mb-1"
           >
             Email or Mobile number
-            {error.email && <span className="text-red-600 ml-1">*Required</span>}
+            {error.email && (
+              <span className="text-red-600 ml-1">*Required</span>
+            )}
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
             <input
