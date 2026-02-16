@@ -9,6 +9,8 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export default function AdminCourse() {
   const [courses, setCourses] = useState<any[]>([]);
   const navigate = useNavigate();
+  const [filterCategory, setFilterCategory] = useState("All");
+
   const getCourses = async () => {
     try {
       const res = await fetch(`${backendUrl}/api/getcourses`);
@@ -43,25 +45,68 @@ export default function AdminCourse() {
     }
   };
 
+  const filteredCourses = courses
+    .filter((course) =>
+      filterCategory === "All" ? true : course.category === filterCategory,
+    )
+    .sort((a, b) => {
+      const getTimestamp = (item: any) => {
+        // Extract timestamp from MongoDB _id
+        if (item._id) {
+          return parseInt(item._id.substring(0, 8), 16) * 1000;
+        }
+        return 0;
+      };
+
+      const dateA = getTimestamp(a);
+      const dateB = getTimestamp(b);
+      return dateB - dateA;
+    });
+
+  const categories = [
+    "All",
+    "Development",
+    "Data Science",
+    "Design",
+    "Marketing",
+    "Business",
+    "Photography",
+    "Music",
+    "Softwares",
+    "Others",
+  ];
   return (
     <div className="flex min-h-screen -mb-14">
       <AdminNav />
       <div className="flex-1 p-4 md:p-10 bg-gray-50">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <h1 className="text-2xl md:text-3xl text-gray-800 font-bold">
-            Manage Courses �
+            Manage Courses 📚
           </h1>
-          <button
-            onClick={() => navigate("/admin/addcourses")}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-95 font-medium"
-          >
-            <span>+</span> Add New Course
-          </button>
+          <div className="flex items-center gap-4">
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category === "All" ? "All Categories" : category}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() => navigate("/admin/addcourses")}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-95 font-medium"
+            >
+              <span>+</span> Add New Course
+            </button>
+          </div>
         </div>
 
-        {courses.length !== 0 ? (
+        {filteredCourses.length !== 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-[3rem]">
-            {courses.map((e: any) => (
+            {filteredCourses.map((e: any) => (
               <div
                 key={e["_id"]}
                 className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col group"
@@ -84,7 +129,9 @@ export default function AdminCourse() {
                   >
                     {e.title}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-4">by {e.instructor}</p>
+                  <p className="text-sm text-gray-500 mb-4">
+                    by {e.instructor}
+                  </p>
                   <div className="flex justify-between items-center mt-auto mb-2">
                     <span className="text-lg font-bold text-gray-900">
                       ₹{e.price}
@@ -118,15 +165,26 @@ export default function AdminCourse() {
               No Courses Found
             </h2>
             <p className="text-gray-500 mb-6 max-w-sm">
-              You haven't added any courses yet. Start by adding a new course to
-              your platform.
+              {filterCategory === "All"
+                ? "You haven't added any courses yet. Start by adding a new course to your platform."
+                : `No courses found in ${filterCategory} category.`}
             </p>
-            <button
-              onClick={() => navigate("/admin/addcourses")}
-              className="text-indigo-600 font-medium hover:text-indigo-700 hover:underline"
-            >
-              Add a Course Now
-            </button>
+            {filterCategory === "All" && (
+              <button
+                onClick={() => navigate("/admin/addcourses")}
+                className="text-indigo-600 font-medium hover:text-indigo-700 hover:underline"
+              >
+                Add a Course Now
+              </button>
+            )}
+            {filterCategory !== "All" && (
+              <button
+                onClick={() => setFilterCategory("All")}
+                className="text-indigo-600 font-medium hover:text-indigo-700 hover:underline"
+              >
+                Clear Filter
+              </button>
+            )}
           </div>
         )}
       </div>

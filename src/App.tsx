@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import About from "./pages/About";
+import CourseDetails from "./pages/CourseDetails";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminRoute from "./admin/AdminRoute";
 import AdminDash from "./admin/AdminDash";
@@ -51,6 +52,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<About />} />
             <Route path="/courses" element={<Courses />} />
+            <Route path="/course/:id" element={<CourseDetails />} />
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />

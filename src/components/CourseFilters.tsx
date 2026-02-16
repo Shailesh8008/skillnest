@@ -70,6 +70,8 @@ export default function CourseFilters({
             "Photography",
             "Music",
             "Data Science",
+            "Softwares",
+            "Others",
           ].map((category) => (
             <label
               key={category}

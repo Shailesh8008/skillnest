@@ -8,6 +8,8 @@ import {
   Music,
   Globe,
   HelpCircle,
+  AppWindow,
+  MoreHorizontal,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -60,6 +62,14 @@ const CATEGORY_STYLES: Record<string, CategoryStyle> = {
   Languages: {
     icon: Globe,
     color: "bg-teal-100 text-teal-600",
+  },
+  Softwares: {
+    icon: AppWindow,
+    color: "bg-orange-100 text-orange-600",
+  },
+  Others: {
+    icon: MoreHorizontal,
+    color: "bg-slate-100 text-slate-600",
   },
 };
 
