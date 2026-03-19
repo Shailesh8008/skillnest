@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X, BookOpen, LayoutDashboard, LogOut, User } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import Contact from "./Contact";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { clearUser } from "../store/userSlice";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -14,19 +15,11 @@ export default function Navbar() {
   const pathname = location.pathname;
   const navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  useEffect(() => {
-    fetch(`${backendUrl}/api/auth/user`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setUser(data.user);
-        }
-      });
-  }, []);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
+  const userLabel = user
+    ? `${user.fname || ""} ${user.lname || ""}`.trim() || user.email
+    : "";
 
   const handleLogout = async () => {
     try {
@@ -36,7 +29,7 @@ export default function Navbar() {
       });
       const data = await res.json();
       if (data.ok) {
-        setUser(null);
+        dispatch(clearUser());
         setShowLogoutConfirm(false);
         window.location.href = "/";
       } else {
@@ -123,17 +116,9 @@ export default function Navbar() {
                       onClick={() => setShowDropdown(!showDropdown)}
                       className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 border-indigo-100 hover:border-indigo-500 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      {user.avatar_url ? (
-                        <img
-                          src={user.avatar_url}
-                          alt={user.login}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                          <User className="w-5 h-5" />
-                        </div>
-                      )}
+                      <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <User className="w-5 h-5" />
+                      </div>
                     </button>
 
                     {showDropdown && (
@@ -145,9 +130,7 @@ export default function Navbar() {
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden z-20">
                           <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
                             <p className="text-sm font-medium text-gray-900 truncate">
-                              {user.fname
-                                ? `${user.fname} ${user.lname || ""}`
-                                : user.email}
+                              {userLabel}
                             </p>
                             <p className="text-xs text-gray-500 truncate">
                               {user.email}
@@ -261,20 +244,12 @@ export default function Navbar() {
                 {user ? (
                   <div className="px-4 space-y-3">
                     <div className="flex items-center gap-3 mb-3">
-                      {user.avatar_url ? (
-                        <img
-                          src={user.avatar_url}
-                          alt="Profile"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                          <User className="w-6 h-6" />
-                        </div>
-                      )}
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                        <User className="w-6 h-6" />
+                      </div>
                       <div>
                         <p className="text-base font-medium text-gray-800">
-                          {user.fname || user.email?.split("@")[0]}
+                          {userLabel}
                         </p>
                         <p className="text-sm text-gray-500 truncate">
                           {user.email}

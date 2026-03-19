@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Footer from "./components/Footer";
@@ -18,8 +19,16 @@ import AdminQuery from "./admin/AdminQuery";
 import AddCourse from "./admin/AddCourse";
 import EditCourse from "./admin/EditCourse";
 import QueryReply from "./admin/QueryReply";
+import { useAppDispatch } from "./store/hooks";
+import { fetchCurrentUser } from "./store/userSlice";
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCurrentUser());
+  }, [dispatch]);
+
   return (
     <Router>
       <ScrollToTop />

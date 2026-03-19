@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { User, Mail, Shield, BookOpen, LogOut, Compass } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { clearUser } from "../store/userSlice";
 
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const dispatch = useAppDispatch();
+  const { user, initialized } = useAppSelector((state) => state.user);
+  const userLabel = user
+    ? `${user.fname || ""} ${user.lname || ""}`.trim() || user.email
+    : "";
 
   const handleLogout = async () => {
     try {
@@ -17,6 +23,7 @@ export default function Dashboard() {
       });
       const data = await res.json();
       if (data.ok) {
+        dispatch(clearUser());
         toast.success("Logged out successfully");
         window.location.href = "/";
       } else {
@@ -29,23 +36,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetch(`${backendUrl}/api/auth/user`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          console.log(data);
-          setUser(data.user);
-        } else {
-          navigate("/login");
-        }
-      })
-      .catch(() => navigate("/login"));
-  }, []);
+    if (initialized && !user) {
+      navigate("/login");
+    }
+  }, [initialized, navigate, user]);
 
-  if (!user) return null;
+  if (!initialized || !user) return null;
 
   return (
     <div className="bg-gray-50 min-h-screen py-12">
@@ -56,26 +52,16 @@ export default function Dashboard() {
           <div className="bg-indigo-600 h-32 relative">
             <div className="absolute -bottom-12 left-8">
               <div className="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-md group">
-                {user.avatar_url ? (
-                  <img
-                    src={user.avatar_url}
-                    alt={user.fname}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-600">
-                    <User className="w-10 h-10" />
-                  </div>
-                )}
+                <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                  <User className="w-10 h-10" />
+                </div>
               </div>
             </div>
           </div>
 
           <div className="pt-16 pb-8 px-8">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
-                {user.fname} {user.lname}
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900">{userLabel}</h2>
               <div className="flex items-center gap-2 text-gray-500 mt-1">
                 <Mail className="w-4 h-4" />
                 <span>{user.email}</span>
