@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import About from "./pages/About";
 import CourseDetails from "./pages/CourseDetails";
 import ScrollToTop from "./components/ScrollToTop";
+import GuestRoute from "./components/GuestRoute";
 import AdminRoute from "./admin/AdminRoute";
 import AdminDash from "./admin/AdminDash";
 import AdminCourse from "./admin/AdminCourse";
@@ -64,8 +65,22 @@ function App() {
             <Route path="/course/:id" element={<CourseDetails />} />
             <Route path="/my-courses" element={<MyCourses />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route
+              path="/login"
+              element={
+                <GuestRoute>
+                  <Login />
+                </GuestRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <GuestRoute>
+                  <Signup />
+                </GuestRoute>
+              }
+            />
 
             <Route
               path="/admin/dashboard"

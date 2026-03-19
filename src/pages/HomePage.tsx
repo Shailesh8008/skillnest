@@ -4,6 +4,7 @@ import FeatureHighlights from "../components/FeatureHighlights";
 import CourseCard from "../components/CourseCard";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAppSelector } from "../store/hooks";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 interface Course {
@@ -31,6 +32,7 @@ interface CourseCardData {
 }
 
 export default function HomePage() {
+  const user = useAppSelector((state) => state.user.user);
   const [courses, setCourses] = useState<CourseCardData[]>([]);
   const [featuredCourses, setFeaturedCourses] = useState<CourseCardData[]>([]);
   const [enrolledCourses, setEnrolledCourses] = useState<Set<string>>(
@@ -153,12 +155,21 @@ export default function HomePage() {
             transforming their careers with SkillNest.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate("/signup")}
-              className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-200"
-            >
-              Get Started for Free
-            </button>
+            {user ? (
+              <button
+                onClick={() => navigate("/my-courses")}
+                className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-200"
+              >
+                My Courses
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/signup")}
+                className="bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl hover:-translate-y-1 transform duration-200"
+              >
+                Get Started for Free
+              </button>
+            )}
             <button
               onClick={() => navigate("/courses")}
               className="bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition-colors"

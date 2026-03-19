@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
@@ -56,10 +56,6 @@ export default function Login() {
       [e.target.id]: false,
     });
   };
-  useEffect(()=> {
-    
-  },[])
-
   return (
     <AuthLayout
       title="Welcome back"
